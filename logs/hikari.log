@@ -1,0 +1,6 @@
+2026-02-10 11:37:20 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-02-10 11:37:21 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5dfd31f4
+2026-02-10 11:37:21 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-02-10 12:18:33 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-02-10 12:18:33 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2774dcf4
+2026-02-10 12:18:33 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
