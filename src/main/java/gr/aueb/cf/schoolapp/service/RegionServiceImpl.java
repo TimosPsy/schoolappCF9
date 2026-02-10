@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RegionService implements IRegionService{
+public class RegionServiceImpl implements IRegionService{
     private final RegionRepository regionRepository;
     public final Mapper mapper;
 
