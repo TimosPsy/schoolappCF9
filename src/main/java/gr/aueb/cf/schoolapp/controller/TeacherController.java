@@ -2,7 +2,9 @@ package gr.aueb.cf.schoolapp.controller;
 
 import gr.aueb.cf.schoolapp.core.exceptions.EntityAlreadyExistsException;
 import gr.aueb.cf.schoolapp.core.exceptions.EntityInvalidArgumentException;
+import gr.aueb.cf.schoolapp.core.exceptions.EntityNotFoundException;
 import gr.aueb.cf.schoolapp.dto.RegionReadOnlyDTO;
+import gr.aueb.cf.schoolapp.dto.TeacherEditDTO;
 import gr.aueb.cf.schoolapp.dto.TeacherInsertDTO;
 import gr.aueb.cf.schoolapp.dto.TeacherReadOnlyDTO;
 import gr.aueb.cf.schoolapp.service.IRegionService;
@@ -17,14 +19,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Controller
@@ -65,17 +65,18 @@ public class TeacherController {
             redirectAttributes.addFlashAttribute("teacherReadOnlyDTO", teacherReadOnlyDTO);
             return "redirect:/teachers/success";
 
-        }catch (EntityAlreadyExistsException | EntityInvalidArgumentException e) {
+        } catch (EntityAlreadyExistsException | EntityInvalidArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "teacher-insert";
-
         }
-
     }
 
     @GetMapping({"", "/"})
     public String getPaginatedTeachers(@PageableDefault(page = 0, size = 5, sort = "lastname")
                                        Model model, Pageable pageable) {
+
+        Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachers(pageable);
+
 //        Page<TeacherReadOnlyDTO> teachersPage = new PageImpl<>(Stream.of(
 //                        new TeacherReadOnlyDTO("ab123", "Pavlos", "Pavlopoulos", "1234", "Athens"),
 //                        new TeacherReadOnlyDTO("ab124", "Nikos", "Charos", "1234", "Athens"),
@@ -90,10 +91,43 @@ public class TeacherController {
 //        model.addAttribute("teachers", teachersPage.getContent());
 //        model.addAttribute("page",teachersPage);
 //        return "teachers";
-        Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachers(pageable);
         model.addAttribute("teachers", teachersPage.getContent());
         model.addAttribute("page", teachersPage);
         return "teachers";
+    }
+
+    @GetMapping("/edid/{uuid}")   //path variable
+    public String getTeacherEdit(@PathVariable UUID uuid, Model model) {
+        try {
+            TeacherEditDTO teacherEditDTO = teacherService.getTeacherByUUID(uuid);
+            model.addAttribute("teacherEditDTO", teacherEditDTO);
+            return "teacher-edit";
+        }catch (EntityNotFoundException e) {
+           model.addAttribute("errorMessage", e.getMessage());
+        }
+        return "teacher-edit";
+    }
+
+    @PostMapping("/edit")
+    public String updateTeacher(@Valid @ModelAttribute("teacherEdidDTO") TeacherEditDTO teacherEditDTO,
+                                BindingResult bindingResult,RedirectAttributes redirectAttributes, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "teacher-edit";
+        }
+
+        try {
+            teacherService.updateTeacher(teacherEditDTO);
+            redirectAttributes.addFlashAttribute("teacherReadOnlyDTO", teacherEditDTO);
+            return "redirect:/teachers/update-success";
+        } catch (EntityNotFoundException | EntityAlreadyExistsException | EntityInvalidArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "teacher-edit";
+        }
+    }
+
+    @GetMapping("/update-success")
+    public String updateSuccess() {
+        return "update-teacher-success";
     }
 
     @GetMapping("/success")
