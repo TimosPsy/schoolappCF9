@@ -77,8 +77,8 @@ public class TeacherController {
     public String getPaginatedTeachers(@PageableDefault(page = 0, size = 5, sort = "lastname")
                                        Model model, Pageable pageable) {
 
-        Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachers(pageable);
-
+        //Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachers(pageable);
+        Page<TeacherReadOnlyDTO> teachersPage = teacherService.getPaginatedTeachersDeletedFalse(pageable);
 //        Page<TeacherReadOnlyDTO> teachersPage = new PageImpl<>(Stream.of(
 //                        new TeacherReadOnlyDTO("ab123", "Pavlos", "Pavlopoulos", "1234", "Athens"),
 //                        new TeacherReadOnlyDTO("ab124", "Nikos", "Charos", "1234", "Athens"),
@@ -139,6 +139,23 @@ public class TeacherController {
         return "teacher-success";
     }
 
+    @PostMapping("/delete/{uuid}")
+    public String deleteTeacher(@PathVariable UUID uuid, Model model, RedirectAttributes redirectAttributes) {
+
+        try {
+            TeacherReadOnlyDTO readOnlyDTO = teacherService.deleteTeacherByUUID(uuid);
+            redirectAttributes.addFlashAttribute("teacherReadyOnlyDTO", readOnlyDTO);
+            return "redirect:/teachers/delete-success";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage",e.getMessage());
+            return "teachers";
+        }
+    }
+
+    @GetMapping("/delete/success")
+    public String deleteSuccess() {
+        return "delete-teachers-success";
+    }
 
     @ModelAttribute("regionsReadOnlyDTO")       // Εκτελείται πριν από κάθε request handler
     public List<RegionReadOnlyDTO> regions() {

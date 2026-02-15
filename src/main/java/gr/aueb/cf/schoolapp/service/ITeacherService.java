@@ -18,12 +18,16 @@ public interface ITeacherService {
     public boolean isTeacherExists(String uuid);
 
     Page<TeacherReadOnlyDTO> getPaginatedTeachers(Pageable pageable);
+    Page<TeacherReadOnlyDTO> getPaginatedTeachersDeletedFalse(Pageable pageable);
+
 
     TeacherEditDTO getTeacherByUUID(UUID uuid) throws EntityNotFoundException;
 
     TeacherReadOnlyDTO updateTeacher(TeacherEditDTO teacherEditDTO)
         throws EntityNotFoundException, EntityAlreadyExistsException, EntityInvalidArgumentException;
 
+    TeacherReadOnlyDTO deleteTeacherByUUID(UUID uuid) throws EntityNotFoundException;
     }
+
 
 
