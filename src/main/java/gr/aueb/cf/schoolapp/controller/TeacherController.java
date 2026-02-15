@@ -144,7 +144,7 @@ public class TeacherController {
 
         try {
             TeacherReadOnlyDTO readOnlyDTO = teacherService.deleteTeacherByUUID(uuid);
-            redirectAttributes.addFlashAttribute("teacherReadyOnlyDTO", readOnlyDTO);
+            redirectAttributes.addFlashAttribute("teacherReadOnlyDTO", readOnlyDTO);
             return "redirect:/teachers/delete-success";
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage",e.getMessage());
@@ -152,9 +152,9 @@ public class TeacherController {
         }
     }
 
-    @GetMapping("/delete/success")
+    @GetMapping("/delete-success")
     public String deleteSuccess() {
-        return "delete-teachers-success";
+        return "delete-teacher-success";
     }
 
     @ModelAttribute("regionsReadOnlyDTO")       // Εκτελείται πριν από κάθε request handler
