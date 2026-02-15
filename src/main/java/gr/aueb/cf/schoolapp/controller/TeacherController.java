@@ -9,6 +9,7 @@ import gr.aueb.cf.schoolapp.dto.TeacherInsertDTO;
 import gr.aueb.cf.schoolapp.dto.TeacherReadOnlyDTO;
 import gr.aueb.cf.schoolapp.service.IRegionService;
 import gr.aueb.cf.schoolapp.service.ITeacherService;
+import gr.aueb.cf.schoolapp.validator.TeacherEditValidator;
 import gr.aueb.cf.schoolapp.validator.TeacherInsertValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class TeacherController {
     private final ITeacherService teacherService;
     private final IRegionService regionService;
     private final TeacherInsertValidator teacherInsertValidator;
+    private final TeacherEditValidator teacherEditValidator;
 
     @GetMapping("/insert")
     public String getTeacherForm(Model model) {
@@ -96,28 +98,29 @@ public class TeacherController {
         return "teachers";
     }
 
-    @GetMapping("/edid/{uuid}")   //path variable
+    @GetMapping("/edit/{uuid}")         // path variable
     public String getTeacherEdit(@PathVariable UUID uuid, Model model) {
         try {
             TeacherEditDTO teacherEditDTO = teacherService.getTeacherByUUID(uuid);
             model.addAttribute("teacherEditDTO", teacherEditDTO);
-            return "teacher-edit";
-        }catch (EntityNotFoundException e) {
-           model.addAttribute("errorMessage", e.getMessage());
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", e.getMessage());
         }
         return "teacher-edit";
     }
 
     @PostMapping("/edit")
-    public String updateTeacher(@Valid @ModelAttribute("teacherEdidDTO") TeacherEditDTO teacherEditDTO,
-                                BindingResult bindingResult,RedirectAttributes redirectAttributes, Model model) {
+    public String updateTeacher(@Valid @ModelAttribute("teacherEditDTO") TeacherEditDTO teacherEditDTO,
+                                BindingResult bindingResult, RedirectAttributes redirectAttributes,  Model model) {
+
+        teacherEditValidator.validate(teacherEditDTO, bindingResult);
         if (bindingResult.hasErrors()) {
             return "teacher-edit";
         }
 
         try {
-            teacherService.updateTeacher(teacherEditDTO);
-            redirectAttributes.addFlashAttribute("teacherReadOnlyDTO", teacherEditDTO);
+            TeacherReadOnlyDTO readOnlyDTO = teacherService.updateTeacher(teacherEditDTO);
+            redirectAttributes.addFlashAttribute("teacherReadOnlyDTO", readOnlyDTO);
             return "redirect:/teachers/update-success";
         } catch (EntityNotFoundException | EntityAlreadyExistsException | EntityInvalidArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -129,6 +132,7 @@ public class TeacherController {
     public String updateSuccess() {
         return "update-teacher-success";
     }
+
 
     @GetMapping("/success")
     public String teacherSuccess(Model model) {
