@@ -20,7 +20,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Setter(AccessLevel.NONE)
@@ -30,12 +30,12 @@ public class Role {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.PROTECTED)
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "role_capabilities",
-                        joinColumns = @JoinColumn(name = "role_id"),
-                        inverseJoinColumns = @JoinColumn(name = "capability_id"))
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "roles_capabilities",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "capability_id")
+    )
     private Set<Capability> capabilities = new HashSet<>();
-
 
     public Set<Capability> getAllCapabilities() {
         return Set.copyOf(capabilities);

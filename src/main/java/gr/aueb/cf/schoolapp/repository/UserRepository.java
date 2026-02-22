@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = {"role"})
+    @EntityGraph(attributePaths = {"role", "role.capabilities"})
     Optional<User> findByUsername(String username);
 
 
