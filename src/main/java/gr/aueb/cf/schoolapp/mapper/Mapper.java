@@ -1,7 +1,7 @@
 package gr.aueb.cf.schoolapp.mapper;
 
-
 import gr.aueb.cf.schoolapp.dto.*;
+import gr.aueb.cf.schoolapp.model.Role;
 import gr.aueb.cf.schoolapp.model.Teacher;
 import gr.aueb.cf.schoolapp.model.User;
 import gr.aueb.cf.schoolapp.model.static_data.Region;
@@ -14,6 +14,11 @@ public class Mapper {
         return new Teacher(null, null, teacherInsertDTO.vat(), teacherInsertDTO.firstname(), teacherInsertDTO.lastname(), null);
     }
 
+    public TeacherEditDTO mapToTeacherEditDTO(Teacher teacher) {
+        return new TeacherEditDTO(teacher.getUuid(), teacher.getFirstname(),
+                teacher.getLastname(), teacher.getVat(), teacher.getRegion().getId());
+    }
+
     public TeacherReadOnlyDTO mapToTeacherReadOnlyDTO(Teacher teacher) {
         return new TeacherReadOnlyDTO(teacher.getUuid().toString(), teacher.getFirstname(), teacher.getLastname(),
                 teacher.getVat(), teacher.getRegion().getName());
@@ -21,12 +26,6 @@ public class Mapper {
 
     public RegionReadOnlyDTO mapToRegionReadOnlyDTO(Region region) {
         return new RegionReadOnlyDTO(region.getId(), region.getName());
-    }
-
-    public TeacherEditDTO mapToTeacherEditDTO(Teacher teacher) {
-        return new TeacherEditDTO(teacher.getUuid(), teacher.getFirstname(),
-                teacher.getLastname(), teacher.getVat(), teacher.getRegion().getId());
-
     }
 
     public User mapToUserEntity(UserInsertDTO userInsertDTO) {
@@ -37,7 +36,7 @@ public class Mapper {
         return new UserReadOnlyDTO(user.getUuid().toString(), user.getUsername(), user.getRole().getName());
     }
 
-//    public RoleReadOnlyDTO mapToRoleReadOnlyDTO(Role role) {
-//        return new RoleReadOnlyDTO(role.getId(), role.getName());
-//    }
+    public RoleReadOnlyDTO mapToRoleReadOnlyDTO(Role role) {
+        return new RoleReadOnlyDTO(role.getId(), role.getName());
+    }
 }
